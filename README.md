@@ -1,3 +1,3 @@
 # Tangobookings
 
-backpage for tango taxi dancers
+backpage for tango taxi dancers and teachers
