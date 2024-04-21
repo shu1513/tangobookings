@@ -9,10 +9,10 @@ Register
 
 {% block main %}
 <!-- will need to add email password confirmation or/linked account with facebook -->
-<form id="registrationForm" onsubmit="return validateForm()" action="/register" method="post">
+<form id="registrationForm" action="/register" method="post">
     <div class="mb-3">
         <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username"
-            placeholder="Username" type="text" required oninput="checkUsername()">
+            placeholder="Username" type="text" required>
         <div id="usernameGuide1"></div>
         <div id="usernameGuide2"></div>
         <div id="usernameGuide3"></div>
@@ -21,15 +21,14 @@ Register
     <div class="mb-3">
 
         <input class="form-control mx-auto w-auto" minlength="8" maxlength="16" id="password" name="password"
-            placeholder="Password" type="password" required oninput="passwordGuide()">
+            placeholder="Password" type="password" required>
         <div id="passwordGuide1"></div>
         <div id="passwordGuide2"></div>
         <div id="passwordGuide3"></div>
     </div>
     <div class="mb-3">
         <input class="form-control mx-auto w-auto" minlength="8" maxlength="16" id="confirmPassword"
-            name="confirmPassword" placeholder="Re-enter password" type="password" oninput="checkPasswordMatch()"
-            required>
+            name="confirmPassword" placeholder="Re-enter password" type="password" required>
         <span id="confirmationIcon"></span>
         <span id="confirmationMessage"></span>
     </div>
