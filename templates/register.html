@@ -45,16 +45,18 @@ Register
         <input autocomplete="off" class="form-control mx-auto w-auto" type="text" id="first_name" name="first_name"
             placeholder="First Name" required>
         <div id="firstNameGuide1"></div>
+        <div id="firstNameGuide2"></div>
     </div>
     <div class="mb-3">
         <input autocomplete="off" class="form-control mx-auto w-auto" type="text" id="last_name" name="last_name"
             placeholder="Last Name" required>
         <div id="lastNameGuide1"></div>
+        <div id="lastNameGuide2"></div>
     </div>
     <span>I dance as:</span>
     <div class="mb-3">
         {% for role in roles %}
-        <input type="radio" id="role" name="role" value="{{ role }}"> {{role}}
+        <input type="radio" id="role" name="role" value="{{ role }}" required> {{role}}
         {% endfor %}
         <div id="roleGuide1"></div>
     </div>

@@ -59,6 +59,11 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+        # Query database for username
+        rows = db.execute(
+            "SELECT * FROM users WHERE username = ?", request.form.get("username")
+        )
+
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
@@ -67,13 +72,8 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        # Query database for username
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
-
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(
+        elif len(rows) != 1 or not check_password_hash(
             rows[0]["password_hash"], request.form.get("password")
         ):
             return apology("invalid username and/or password", 403)
@@ -107,6 +107,7 @@ def register():
     if request.method == "POST":
         username = request.form.get("username").strip()
         password = request.form.get("password")
+        confirm_password = request.form.get("confirmPassword")
         email = request.form.get("email").strip()
         role = request.form.get("role")
         first_name = request.form.get("first_name").strip()
@@ -117,17 +118,19 @@ def register():
         existing_email = db.execute(
             "SELECT * FROM users WHERE email = ?", request.form.get("email")
         )
-        if not request.form.get("username"):
+        if not username:
             return apology("must provide username", 403)
+        elif len(username)<8 or len(username)>16 or not any(char.isdigit() or char.isalpha() for char in username):
+            return apology("username must be 8 to 16 characters long, and contains at least 1 number and 1 letter.")
         elif not password:
             return apology("must provide password", 403)
-        elif not request.form.get("confirmPassword"):
+        elif not confirm_password:
             return apology("must re-enter password", 403)
         elif existing_user:
             return apology(
                 "this username already exist, please choose another", 403
             )
-        elif request.form.get("confirmPassword") != request.form.get("password"):
+        elif password != confirm_password:
             return apology("passwords words must match", 403)
         elif (
             len(password) < 8
@@ -142,6 +145,18 @@ def register():
             )
         elif existing_email:
             return apology ("the email you have entered is already associted with an account")
+        elif not first_name:
+            return apology("must provide first name", 403)
+        elif not last_name:
+            return apology("must provide lastname", 403)
+        elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in first_name):
+            return apology("first name should not contain numbers, spaces, or special characters", 403)
+        elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in last_name):
+            return apology("last name should not contain numbers, spaces, or special characters", 403)
+        elif len(first_name) > 25:
+            return apology ("first name field only allows up to 25 characters", 403)
+        elif len(last_name) > 50:
+            return apology ("last name field only allows up to 50 characters", 403)
         elif role not in ROLES:
             return apology(
                 "Please select valid role", 403
