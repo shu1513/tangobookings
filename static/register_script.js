@@ -1,8 +1,56 @@
 //javacript for password confirmations in the register.html page.
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('finance.db');
+document.addEventListener("DOMContentLoaded", function () {
+    // Add event listeners
+    document.getElementById("registrationForm").addEventListener("submit", validateForm);
+    document.getElementById("username").addEventListener("input", checkUsername);
+    document.getElementById("password").addEventListener("input", passwordGuide);
+    document.getElementById("confirmPassword").addEventListener("input", checkPasswordMatch);
+    document.getElementById("first_name").addEventListener("input", checkFirstName);
+    document.getElementById("last_name").addEventListener("input", checkLastName);
 
+});
+
+function validateForm(event) {
+
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const confirmationIcon = document.getElementById("confirmationIcon");
+    const username = document.getElementById("username").value;
+    const firstName = document.getElementById("first_name").value;
+    const lastName = document.getElementById("last_name").value;
+
+    if (!(username.length >= 8 && username.length <= 16 &&
+        /\d/.test(username) && /[a-zA-Z]/.test(username) &&
+        !/\W/.test(username))) {
+        event.preventDefault();
+    }
+
+    if (password !== confirmPassword) {
+        document.getElementById("confirmationMessage").innerHTML = "Passwords do not match";
+        document.getElementById("confirmationMessage").className = "invalid";
+        confirmationIcon.innerHTML = '<span class="valid">&#10008;</span>';
+        event.preventDefault();
+    }
+    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/.test(password)) {
+        document.getElementById("confirmationMessage").innerHTML = "Password doesn't meet criteria";
+        document.getElementById("confirmationMessage").className = "invalid";
+        confirmationIcon.innerHTML = '<span class="invalid">&#10008;</span>';
+        event.preventDefault();
+    }
+    else if (firstName.length > 25 || /\W/.test(firstName) || /\s/.test(firstName) || /\d/.test(firstName)) {
+        event.preventDefault();
+    }
+    else if (lastName.length > 50 || /\W/.test(lastName) || /\s/.test(lastName) || /\d/.test(lastName)) {
+        event.preventDefault();
+    }
+    else {
+        document.getElementById("confirmationMessage").innerHTML = "Passwords match";
+        document.getElementById("confirmationMessage").className = "valid";
+    }
+
+    return true;
+}
 
 async function checkUsername() {
     const username = document.getElementById("username").value;
@@ -23,65 +71,6 @@ async function checkUsername() {
         usernameGuide3.innerHTML = "<span class='valid'>&#10004;</span> no special characters";
     }
 
-}
-/*      // Fetch all usernames from the database
-      db.all("SELECT * FROM users", (err, usernames_list) => {
-          if (err) {
-              throw err;
-          }
-
-          // Check if the entered username already exists
-          const isDuplicate = usernames_list.some(name => name.username === username);
-
-          if (isDuplicate) {
-              // Display an error message if the username already exists
-              document.getElementById("usernameCheck").innerHTML = "This username already exists. please choose another";
-              document.getElementById("usernameCheck").style.color = "red";
-              return false;
-          } else {
-              // Clear the error message if the username is not a duplicate
-              document.getElementById("usernameDuplicate").innerHTML = "";
-              return true;
-                  }
-          });
-  */
-
-
-// Example of how to call the function (e.g., on a button click)
-// document.getElementById("checkUsernameButton").addEventListener("click", checkUsernameDuplicate);
-
-
-function validateForm() {
-
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-    const confirmationIcon = document.getElementById("confirmationIcon");
-    const username = document.getElementById("username").value;
-
-    if (!(username.length >= 8 && username.length <= 16 &&
-        /\d/.test(username) && /[a-zA-Z]/.test(username) &&
-        !/\W/.test(username))) {
-        return false
-    }
-
-    if (password != confirmPassword) {
-        document.getElementById("confirmationMessage").innerHTML = "Passwords do not match";
-        document.getElementById("confirmationMessage").className = "invalid";
-        confirmationIcon.innerHTML = '<span class="valid">&#10004;</span>';
-        return false;
-    }
-    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/.test(password)) {
-        document.getElementById("confirmationMessage").innerHTML = "Password doesn't meet criteria";
-        document.getElementById("confirmationMessage").className = "invalid";
-        confirmationIcon.innerHTML = '<span class="invalid">&#10008;</span>';
-        return false;
-    }
-    else {
-        document.getElementById("confirmationMessage").innerHTML = "Passwords match";
-        document.getElementById("confirmationMessage").className = "valid";
-    }
-
-    return true;
 }
 
 function checkPasswordMatch() {
@@ -125,4 +114,47 @@ function passwordGuide() {
 
 }
 
+async function checkFirstName() {
+    const firstName = document.getElementById("first_name").value;
+    const firstNameGuide1 = document.getElementById("firstNameGuide1");
+    const firstNameGuide2 = document.getElementById("firstNameGuide2");
 
+
+    if (/\W/.test(firstName) || /\s/.test(firstName) || /\d/.test(firstName)) {
+        firstNameGuide1.innerHTML = "<span class='invalid'>&#10008;</span> First name cannot contain numbers, special characters or spaces";
+    }
+
+    else {
+        firstNameGuide1.innerHTML = "";
+    }
+
+    if (firstName.length > 25) {
+        firstNameGuide2.innerHTML = "<span class='invalid'>&#10008;</span> First name field cannot contain more than 25 characters";
+    }
+
+    else {
+        firstNameGuide2.innerHTML = "";
+    }
+}
+
+async function checkLastName() {
+    const lastName = document.getElementById("last_name").value;
+    const lastNameGuide1 = document.getElementById("lastNameGuide1");
+    const lastNameGuide2 = document.getElementById("lastNameGuide2");
+
+    if (/\W/.test(lastName) || /\s/.test(lastName) || /\d/.test(lastName)) {
+        lastNameGuide1.innerHTML = "<span class='invalid'>&#10008;</span> Last name cannot contain numbers, special characters or spaces";
+    }
+
+    else {
+        lastNameGuide1.innerHTML = "";
+    }
+
+    if (lastName.length > 50) {
+        lastNameGuide2.innerHTML = "<span class='invalid'>&#10008;</span> Last name field cannot contain more than 50 characters";
+    }
+
+    else {
+        lastNameGuide2.innerHTML = "";
+    }
+}
