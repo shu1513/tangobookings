@@ -178,3 +178,25 @@ def register():
             return redirect("/")
     else:
         return render_template("register.html", roles=ROLES)
+    
+    #show profile 
+@app.route("/profile")
+def profile():
+    username = request.args.get("username")
+    user_info = db.execute("SELECT * FROM users WHERE username = ?", username)[0]
+    first_name, last_name = user_info["first_name"],user_info["last_name"]
+    return render_template("profile.html", first_name=first_name, last_name=last_name)
+@app.route("/myprofile")
+@login_required
+def myprofile():
+    if request.method == "GET":
+        user_id = session["user_id"]
+        user_info = db.execute("SELECT * FROM users WHERE user_id = ?", user_id)[0]
+        first_name, last_name, role, gender, height_cm, email = user_info["first_name"], user_info["last_name"], user_info["role"], user_info["gender"], user_info["height_cm"], user_info["email"]
+        return render_template("myprofile.html", user_info=user_info, first_name=first_name, last_name=last_name, role=role, gender=gender, height_cm=height_cm, email=email)
+
+
+@app.route("/display")
+def display():
+    username = db.execute("SELECT username FROM users WHERE")
+    return redirect(f"/profile?user_id={username}")
