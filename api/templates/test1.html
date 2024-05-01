@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+test1
+{% endblock %}
+
+{% block main %}
+
+<form action="/myprofile" method="post">
+    <label>First Name:</label>
+    <div id="firstNameDisplay">{{first_name}}</div>
+    <div id="firstNameEdit" style="display: none;">
+        <input autocomplete="off" class="form-control mx-auto w-auto" type="text" id="first_name" name="first_name"
+            value="{{first_name}}" required>
+    </div>
+    <label>Last Name:</label>
+    <div id="lastNameDisplay">{{last_name}}</div>
+    <div id="lastNameEdit" style="display: none;">
+        <input autocomplete="off" class="form-control mx-auto w-auto" type="text" id="last_name" name="last_name"
+            value={{last_name}} required>
+    </div>
+    <label>Role:</label>
+    <div id="roleDisplay">{{role}}</div>
+    <div id="roleEdit" style="display: none;">
+        {% for item in ROLES %}
+        <input autocomplete="off" class="mx-auto w-auto" type="radio" id="role" name="role" value="{{item}}" {% if
+            item==role %}checked{% endif %} required>{{item}}
+        {% endfor %}
+    </div>
+    <label>Gender:</label>
+    <div id="genderDisplay">{% if gender %} {{gender}} {% endif %}</div>
+    <div id="genderEdit" style="display: none;">
+        {% for item in GENDERS %}
+        <input autocomplete="off" class="mx-auto w-auto" type="radio" id="gender" name="gender" value="{{item}}" {% if
+            item==gender %}checked{% endif %} required>{{item}}
+        {% endfor %}
+    </div>
+    <div>
+        <label>Height in cm:</label>
+        <span class="display">{% if height_cm %} {{height_cm}} {% endif %}</span> <button
+            class="editButton">edit</button>
+        <div style="display: none;" class="edit">
+            <input autocomplete="off" class=" form-control mx-auto w-auto" type="text" id="height" name="height"
+                value="{{height_cm}}" required>
+            <button type="reset" class="cancelButton">Cancel</button>
+            <button type="submit" class="saveButton">Save</button>
+        </div>
+    </div>
+
+    <div>
+        <label>email:</label>
+        <span class="display">{{email}}</span> <button class="editButton">edit</button>
+        <div style="display: none;" class="edit">
+            <input autocomplete="off" class="form-control mx-auto w-auto" type="text" id="email" name="email"
+                value="{{email}}" required>
+            <button type="reset" class="cancelButton">Cancel</button>
+            <button type="submit" class="saveButton">Save</button>
+        </div>
+    </div>
+
+</form>
+<script src="{{ url_for('static', filename='myprofile_script.js') }}"></script>
+{% endblock %}

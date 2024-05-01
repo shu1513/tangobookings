@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block main %}
+
+<form action="/myprofile" method="post">
+
+    {% for key, value in user_data.items() %}
+
+    <div>
+        <label>{{key|replace("_", " ")}}:</label>
+        <span class="display">{% if value is not none %} {{value}} {% endif %} </span> <button class="editButton"
+            type="button">edit</button>
+        <div class="edit" style="display: none;">
+            {%if key == "Gender"%}
+            {% for item in GENDERS %}
+            <input autocomplete="off" class="mx-auto w-auto" type="radio" name="{{key}}" value="{{item}}" {% if
+                item==value %}checked{% endif %} required>{{item}}
+            {% endfor %}
+            {% elif key == "Role"%}
+            {% for item in ROLES %}
+            <input autocomplete="off" class="mx-auto w-auto" type="radio" name="{{key}}" value="{{item}}" {% if
+                item==value %}checked{% endif %} required>{{item}}
+            {% endfor %}
+            {% else %}
+            <input autocomplete="off" class="form-control mx-auto w-auto" type="text" name="{{key}}" value="{{value}}"
+                required>
+            {% endif %}
+            <button type="reset" class="cancelButton">Cancel</button>
+            <button type="submit" class="saveButton">Save</button>
+        </div>
+    </div>
+
+    {% endfor %}
+</form>
+<script src="{{ url_for('static', filename='myprofile_script.js') }}"></script>
+
+{% endblock %}

@@ -44,6 +44,8 @@ def after_request(response):
     return response
 
 ROLES = ['follower', 'leader', 'both']
+GENDERS = ['female','male']
+
 
 @app.route("/")
 def index():
@@ -186,17 +188,20 @@ def profile():
     user_info = db.execute("SELECT * FROM users WHERE username = ?", username)[0]
     first_name, last_name = user_info["first_name"],user_info["last_name"]
     return render_template("profile.html", first_name=first_name, last_name=last_name)
+
 @app.route("/myprofile")
 @login_required
 def myprofile():
     if request.method == "GET":
         user_id = session["user_id"]
         user_info = db.execute("SELECT * FROM users WHERE user_id = ?", user_id)[0]
-        first_name, last_name, role, gender, height_cm, email = user_info["first_name"], user_info["last_name"], user_info["role"], user_info["gender"], user_info["height_cm"], user_info["email"]
-        return render_template("myprofile.html", user_info=user_info, first_name=first_name, last_name=last_name, role=role, gender=gender, height_cm=height_cm, email=email)
+        user_data = {'First_Name':user_info["first_name"], 'Last_Name':user_info["last_name"], 'Role':user_info["role"], 'Gender':user_info["gender"], 'Height in cm':user_info["height_cm"], 'Email':user_info["email"]}
+        return render_template ("myprofile.html", user_data=user_data,ROLES=ROLES, GENDERS=GENDERS)
+        #return render_template("myprofile.html", user_info=user_info, first_name=first_name, last_name=last_name, role=role, gender=gender, height_cm=height_cm, email=email, ROLES=ROLES, GENDERS=GENDERS)
 
 
 @app.route("/display")
 def display():
+    #for loop
     username = db.execute("SELECT username FROM users WHERE")
     return redirect(f"/profile?user_id={username}")
