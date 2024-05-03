@@ -115,10 +115,10 @@ def register():
         first_name = request.form.get("first_name").strip()
         last_name = request.form.get("last_name").strip()
         existing_user = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
+            "SELECT * FROM users WHERE username = ?", username
         )
         existing_email = db.execute(
-            "SELECT * FROM users WHERE email = ?", request.form.get("email")
+            "SELECT * FROM users WHERE email = ?", email
         )
         if not username:
             return apology("must provide username", 403)
@@ -145,12 +145,14 @@ def register():
                 "Passwords must be 8 to 16 digits long, containing at least 1 upper case letter and 1 lower case letter, one numeric digit, and one special character (example: @$!%*?&)",
                 403,
             )
+        elif not email:
+            return apology("Please provide email address", 403)
         elif existing_email:
-            return apology ("the email you have entered is already associted with an account")
+            return apology ("The email you have entered is already associted with an account, please choose another email", 403)
         elif not first_name:
-            return apology("must provide first name", 403)
+            return apology("Please provide first name", 403)
         elif not last_name:
-            return apology("must provide lastname", 403)
+            return apology("Please provide lastname", 403)
         elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in first_name):
             return apology("first name should not contain numbers, spaces, or special characters", 403)
         elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in last_name):
@@ -189,17 +191,87 @@ def profile():
     first_name, last_name = user_info["first_name"],user_info["last_name"]
     return render_template("profile.html", first_name=first_name, last_name=last_name)
 
-@app.route("/myprofile")
+@app.route("/myprofile", methods=["GET", "POST"])
 @login_required
 def myprofile():
+
+    user_id = session["user_id"]
+
     if request.method == "GET":
-        user_id = session["user_id"]
         user_info = db.execute("SELECT * FROM users WHERE user_id = ?", user_id)[0]
-        user_data = {'First_Name':user_info["first_name"], 'Last_Name':user_info["last_name"], 'Role':user_info["role"], 'Gender':user_info["gender"], 'Height in cm':user_info["height_cm"], 'Email':user_info["email"]}
+        user_data = {'First_Name':user_info["first_name"], 'Last_Name':user_info["last_name"], 'Role':user_info["role"], 'Gender':user_info["gender"], 'Height_in_cm':user_info["height_cm"], 'Email':user_info["email"]}
         return render_template ("myprofile.html", user_data=user_data,ROLES=ROLES, GENDERS=GENDERS)
         #return render_template("myprofile.html", user_info=user_info, first_name=first_name, last_name=last_name, role=role, gender=gender, height_cm=height_cm, email=email, ROLES=ROLES, GENDERS=GENDERS)
 
+    if request.method == "POST":
 
+        form_id = request.form.get("formId")
+
+        match form_id:
+
+            case 'First_Name':
+                first_name = request.form.get("First_Name").strip()
+                if not first_name:
+                    return apology("must provide first name", 403)
+                elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in first_name):
+                    return apology("first name should not contain numbers, spaces, or special characters", 403)
+                elif len(first_name) > 25:
+                    return apology ("first name field only allows up to 25 characters", 403)
+                db.execute(
+                "UPDATE users SET first_name = ? WHERE user_id = ?", first_name, user_id)
+                return redirect("/myprofile")
+            
+            case 'Last_Name':
+                last_name = request.form.get("Last_Name").strip()
+                if not last_name:
+                    return apology("must provide lastname", 403)
+                elif any(char.isdigit() or char in string.punctuation or char.isspace() for char in last_name):
+                    return apology("last name should not contain numbers, spaces, or special characters", 403)
+                elif len(last_name) > 50:
+                    return apology ("last name field only allows up to 50 characters", 403)
+                db.execute(
+                "UPDATE users SET last_name = ? WHERE user_id = ?", last_name, user_id)
+                return redirect("/myprofile")
+            
+            case 'Role':
+                role = request.form.get("Role")
+                if role not in ROLES:
+                    return apology("Please select valid role", 403)
+                db.execute("UPDATE users SET role = ? WHERE user_id = ?", role, user_id)
+                return redirect("/myprofile")
+            
+            case 'Gender':
+                gender = request.form.get("Gender")
+                if gender not in GENDERS:
+                    return apology("gender seletion option limits to male or female ", 403)
+                db.execute("UPDATE users SET gender = ? WHERE user_id = ?", gender, user_id)
+                return redirect("/myprofile")
+            
+            case 'Height_in_cm':
+                height_str = request.form.get("Height_in_cm")
+                if not height_str.isdigit():
+                    return apology("Height must be an integer limited between 100 to 300",403)
+                try:
+                    height = int(height_str)
+                    if not 100 <= height <=300:
+                        return apology("height selection limited between 100 to 300", 403)
+                except ValueError:
+                    return apology("Height must be an interger limited between 100 to 300",403)
+                db.execute("UPDATE users SET height_cm = ? WHERE user_id = ?", height, user_id)
+                return redirect("/myprofile")
+            
+            case 'Email':
+                email = request.form.get("Email")
+                if not email:
+                    return apology("Please provide email address", 403)
+                # if email is associted with another account that is not this account, 
+                existing_email = db.execute("SELECT * FROM users WHERE email = ? AND user_id != ?", email, user_id)
+                if existing_email:
+                    return apology ("The email you have entered is already associted with an account, please choose another email", 403)
+                db.execute("UPDATE users SET email = ? WHERE user_id = ?", email, user_id)
+                return redirect("/myprofile")
+            
+        
 @app.route("/display")
 def display():
     #for loop

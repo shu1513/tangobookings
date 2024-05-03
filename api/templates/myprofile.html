@@ -6,15 +6,16 @@ My Profile
 
 {% block main %}
 
+
+
+{% for key, value in user_data.items() %}
 <form action="/myprofile" method="post">
-
-    {% for key, value in user_data.items() %}
-
     <div>
+        <input type="hidden" name="formId" value="{{key}}">
         <label>{{key|replace("_", " ")}}:</label>
         <span class="display">{% if value is not none %} {{value}} {% endif %} </span> <button class="editButton"
             type="button">edit</button>
-        <div class="edit" style="display: none;">
+        <span class="edit" style="display: none;">
             {%if key == "Gender"%}
             {% for item in GENDERS %}
             <input autocomplete="off" class="mx-auto w-auto" type="radio" name="{{key}}" value="{{item}}" {% if
@@ -25,17 +26,23 @@ My Profile
             <input autocomplete="off" class="mx-auto w-auto" type="radio" name="{{key}}" value="{{item}}" {% if
                 item==value %}checked{% endif %} required>{{item}}
             {% endfor %}
+            {% elif key == "Height_in_cm"%}
+            <input autocomplete="off" class="mx-auto w-auto" type="number" min="100" max="300" name="{{key}}" {% if
+                value is not none %} value="{{value}}" {% endif %} required>
+            {% elif key == "Email"%}
+            <input autocomplete="off" class="mx-auto w-auto" type="email" name="{{key}}" {% if value is not none %}
+                value="{{value}}" {% endif %} required>
             {% else %}
-            <input autocomplete="off" class="form-control mx-auto w-auto" type="text" name="{{key}}" value="{{value}}"
-                required>
+            <input autocomplete="off" class="mx-auto w-auto" type="text" name="{{key}}" {% if value is not none %}
+                value="{{value}}" {% endif %} required>
             {% endif %}
             <button type="reset" class="cancelButton">Cancel</button>
             <button type="submit" class="saveButton">Save</button>
-        </div>
+        </span>
     </div>
-
-    {% endfor %}
 </form>
+{% endfor %}
+
 <script src="{{ url_for('static', filename='myprofile_script.js') }}"></script>
 
 {% endblock %}
