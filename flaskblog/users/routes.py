@@ -17,7 +17,12 @@ from flaskblog.users.forms import (
     RequestResetForm,
     ResetPasswordForm,
 )
-from flaskblog.users.utils import save_picture, remove_old_picture, send_reset_email
+from flaskblog.users.utils import (
+    save_picture,
+    remove_old_picture,
+    send_reset_email,
+    send_verify_email,
+)
 
 users = Blueprint("users", __name__, template_folder="templates")
 
@@ -39,8 +44,9 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
+        send_verify_email(user)
         flash(
-            f"{form.first_name.data} your account has been created, you can now log in!",
+            f"{form.first_name.data}, a verification email has been sent to your inbox. Please check your email to complete the registration process. In case you do not see the verification email in your inbox, please also check your spam folder.",
             "success",
         )
         return redirect(url_for("users.login"))
@@ -54,12 +60,23 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if (
+            user
+            and bcrypt.check_password_hash(user.password, form.password.data)
+            and user.email_verified
+        ):
             login_user(user, remember=form.remember.data)
             flash(f"You are logged in.", "success")
             next_page = request.args.get("next")
-
             return redirect(next_page) if next_page else redirect(url_for("main.home"))
+        elif (
+            user
+            and bcrypt.check_password_hash(user.password, form.password.data)
+            and not user.email_verified
+        ):
+            flash(
+                "Please verify your email in your inbox and then login again", "danger"
+            )
         else:
             flash("Login unsuccessful. Please check email and password", "danger")
     return render_template("users/login.html", title="Login", form=form)
@@ -138,7 +155,7 @@ def reset_request():
 def reset_token(token):
     if current_user.is_authenticated:
         return redirect(url_for("main.home"))
-    user = User.verify_reset_token(token)
+    user = User.verify_token(token)
     if user is None:
         flash("Invalid or expired token", "warning")
         return redirect(url_for("users.reset_request"))
@@ -153,3 +170,21 @@ def reset_token(token):
         )
         return redirect(url_for("users.login"))
     return render_template("users/reset_token.html", title="Reset Password", form=form)
+
+
+@users.route("/verify_email/<token>", methods=["GET", "POST"])
+def verify_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    user = User.verify_token(token)
+    if user is None:
+        flash("Invalid or expired token", "warning")
+        return redirect(url_for("users.reset_request"))
+
+    user.email_verified = True
+    db.session.commit()
+    flash(
+        f"{user.first_name} your account has been successfully created. you can not login!",
+        "success",
+    )
+    return redirect(url_for("users.login"))
