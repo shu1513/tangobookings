@@ -1,7 +1,7 @@
 body {
-    background: #fafafa;
-    color: #333333;
-    margin-top: 5rem;
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
 }
 
 h1,
@@ -10,86 +10,93 @@ h3,
 h4,
 h5,
 h6 {
-    color: #444444;
+  color: #444444;
 }
 
 .bg-steel {
-    background-color: #e8ecef;
+  background-color: #e8ecef;
 }
 
 .site-header .navbar-nav .nav-link {
-    color: #3f434a;
+  color: #3f434a;
 }
 
 .site-header .navbar-nav .nav-link:hover {
-    color: #212529;
+  color: #212529;
 }
 
 .site-header .navbar-nav .nav-link.active {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 nav .navbar-brand .green {
-    color: #2e944b;
+  color: #2e944b;
 }
 
 .content-section {
-    background: #ffffff;
-    padding: 10px 20px;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-    margin-bottom: 20px;
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
 }
 
 .article-title {
-    color: #444444;
+  color: #444444;
 }
 
 a.article-title:hover {
-    color: #428bca;
-    text-decoration: none;
+  color: #428bca;
+  text-decoration: none;
 }
 
 .article-content {
-    white-space: pre-line;
+  white-space: pre-line;
 }
 
 .article-img {
-    height: 65px;
-    width: 65px;
-    margin-right: 16px;
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
 }
 
 .article-metadata {
-    padding-bottom: 1px;
-    margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3;
 }
 
 .article-metadata a:hover {
-    color: #333;
-    text-decoration: none;
+  color: #333;
+  text-decoration: none;
 }
 
 .article-svg {
-    width: 25px;
-    height: 25px;
-    vertical-align: middle;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
 }
 
 .account-img {
-    height: 125px;
-    width: 125px;
-    margin-right: 20px;
-    margin-bottom: 16px;
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
 }
 
 .account-heading {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 /* static/css/styles.css */
 .label-spacing {
-    margin-right: 10px;
-    /* Adjust the value as needed */
+  margin-right: 10px;
+  /* Adjust the value as needed */
+}
+
+.invalid-feedback {
+  display: block; /* Ensure the invalid-feedback div is displayed */
+  color: #dc3545; /* Adjust text color to indicate error */
+  font-size: 80%; /* Optionally adjust font size */
+  padding-top: 0.25rem; /* Optionally adjust padding */
 }

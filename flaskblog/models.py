@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(10), nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default="default.png")
     posts = db.relationship("Post", backref="author", lazy=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_reset_token(self):
         serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
