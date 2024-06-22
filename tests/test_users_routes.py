@@ -1,44 +1,8 @@
-"""import unittest
-from flaskblog import create_app
-
-
-class TestUserRoutes(unittest.TestCase):
-
-    def setUp(self):
-        self.app = create_app({"TESTING": True})
-        self.client = self.app.test_client()
-
-    def test_home(self):
-        response = self.client.get("/")
-        self.assertEqual(response.status_code, 200)
-
-    def test_register(self):
-        response = self.client.get("/register")
-        self.assertEqual(response.status_code, 200)
-
-    def test_login(self):
-        response = self.client.get("/login")
-        self.assertEqual(response.status_code, 200)
-
-    def test_logout(self):
-        response = self.client.get("/logout")
-        self.assertEqual(response.status_code, 302)
-
-    def test_account(self):
-        response = self.client.get("/account")
-        self.assertEqual(response.status_code, 200)
-
-    def test_reset_password(self):
-        response = self.client.get("/reset_password")
-        self.assertEqual(response.status_code, 200)
-"""
-
 import unittest
 from unittest.mock import patch
 from flask import url_for
 from flaskblog import create_app, db, bcrypt
-from flaskblog.models import User, Post
-from flaskblog.users.forms import RegistrationForm, LoginForm
+from flaskblog.models import User
 from flask_login import current_user
 
 
@@ -48,7 +12,7 @@ class TestBase(unittest.TestCase):
         self.app.config["TESTING"] = True
         self.app.config["WTF_CSRF_ENABLED"] = False
         self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        self.app.config["SERVER_NAME"] = "localhost"
+        self.app.config["SERVER_NAME"] = "localhost.localdomain"
         self.client = self.app.test_client()
         with self.app.app_context():
             db.create_all()
@@ -155,10 +119,13 @@ class TestAccountRoute(TestBase):
         with self.client:
             with self.app.app_context():
                 # Log in the user
-                self.client.post(
+                login_response = self.client.post(
                     url_for("users.login"),
                     data={"email": "test@example.com", "password": "password"},
+                    follow_redirects=True,
                 )
+                self.assertEqual(login_response.status_code, 200)
+                self.assertTrue(current_user.is_authenticated)
 
                 # Mock the form and its return values
 
