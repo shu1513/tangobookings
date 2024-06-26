@@ -12,6 +12,16 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from flask_login import current_user
 from flaskblog.models import User
 
+# ROLE_CHOICES is for both RegistrationForm and UpdateAccountForm
+ROLE_CHOICES = [("Follower", "Follower"), ("Leader", "Leader"), ("Both", "Both")]
+
+
+# Function to validate role field
+def validate_role(form, field):
+    valid_roles = [choice[0] for choice in ROLE_CHOICES]
+    if field.data not in valid_roles:
+        raise ValidationError("Please select a valid role from above.")
+
 
 # set password criteria
 def password_complexity_check(form, field):
@@ -56,8 +66,8 @@ class RegistrationForm(FlaskForm):
     )
     role = RadioField(
         "Role:",
-        choices=[("follower", "Follower"), ("leader", "Leader"), ("both", "Both")],
-        validators=[DataRequired()],
+        choices=ROLE_CHOICES,
+        validators=[DataRequired(), validate_role],
     )
     submit = SubmitField("Sign Up")
 
@@ -94,8 +104,8 @@ class UpdateAccountForm(FlaskForm):
     )
     role = RadioField(
         "Role:",
-        choices=[("follower", "Follower"), ("leader", "Leader"), ("both", "Both")],
-        validators=[DataRequired()],
+        choices=ROLE_CHOICES,
+        validators=[DataRequired(), validate_role],
     )
 
     picture = FileField(

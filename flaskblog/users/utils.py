@@ -26,13 +26,25 @@ def remove_old_picture(old_pic):
         os.remove(os.path.join(current_app.root_path, "static/profile_pics", old_pic))
 
 
-def send_rest_email(user):
+def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message(
         "Password Reset Request", sender="shu151343@gmail.com", recipients=[user.email]
     )
     msg.body = f"""To reset your password, visit the following link:
 {url_for('users.reset_token', token=token, _external=True)}
+If you did NOT make the request pleas ignore this email.
+    """
+    mail.send(msg)
+
+
+def send_verify_email(user):
+    token = user.get_reset_token()
+    msg = Message(
+        "Email Verification", sender="shu151343@gmail.com", recipients=[user.email]
+    )
+    msg.body = f"""To complete your registration, please verify your email by visit the following link:
+{url_for('users.verify_token', token=token, _external=True)}
 If you did NOT make the request pleas ignore this email.
     """
     mail.send(msg)

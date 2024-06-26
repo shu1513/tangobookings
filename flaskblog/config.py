@@ -10,3 +10,4 @@ class Config:
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get("EMAIL_USER")
     MAIL_PASSWORD = os.environ.get("EMAIL_PASS")
+    PASSWORD_SALT = os.environ.get("PASSWORD_SALT")
