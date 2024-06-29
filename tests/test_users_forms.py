@@ -2,6 +2,7 @@ import unittest
 from flaskblog import create_app, db, bcrypt
 from flaskblog.models import User
 from flask_login import login_user
+import logging
 from flaskblog.users.forms import (
     RegistrationForm,
     LoginForm,
@@ -9,6 +10,10 @@ from flaskblog.users.forms import (
     RequestResetForm,
     ResetPasswordForm,
 )
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class TestBase(unittest.TestCase):
@@ -33,11 +38,13 @@ class TestBase(unittest.TestCase):
             )
             db.session.add(user)
             db.session.commit()
+            logger.info("Setup complete: user created with email 'test@example.com'")
 
     def tearDown(self) -> None:
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
+            logger.info("Teardown complete: database cleaned")
 
 
 class TestForms(TestBase):
